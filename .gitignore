@@ -1,0 +1,11 @@
+# gitignore
+
+*.zip
+*.xml
+*.jar
+*bak.php
+
+# local modpacks
+Leon/
+SeaLife/
+TrainModPack/
