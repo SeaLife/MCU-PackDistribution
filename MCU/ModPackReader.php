@@ -163,7 +163,7 @@ class ModPackReader {
 
                         foreach ($metaInfo["imports"] as $import) {
                             $importModule         = new Import();
-                            $importModule->url    = "https://mc.r3ktm8.de/?pack={$import}&amp;import=true";
+                            $importModule->url    = "https://mc.r3ktm8.de/?pack={$import}&import=true";
                             $importModule->packId = $import;
 
                             $pack->addItem($importModule);
