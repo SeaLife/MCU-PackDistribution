@@ -1,30 +1,36 @@
 <?php
+
+spl_autoload_register(function ($name) {
+    $name = str_replace("\\", "/", $name);
+
+    include "$name.php";
+});
+
+include "app.php";
+
+die();
 /*
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-*/
-
-
 $packUrl      = "https://mc.r3ktm8.de";
 $mcVersion    = "1.12.2";
 $forgeVersion = "14.23.4.2747";
 
-$pack = @$_GET["pack"];
+$pack   = @$_GET["pack"];
 $import = @$_GET["import"];
 
-if(empty($import)) { $import = false; }
+if (empty($import)) {
+    $import = FALSE;
+}
 
 header("Content-Type: application/xml");
 
-function endsWith($haystack, $needle) {
+function endsWith ($haystack, $needle) {
     $length = strlen($needle);
 
-    return $length === 0 || 
-    (substr($haystack, -$length) === $needle);
+    return $length === 0 ||
+        (substr($haystack, -$length) === $needle);
 }
 
-function readZipFileEntry($zipFileName, $searchEntryName) {
+function readZipFileEntry ($zipFileName, $searchEntryName) {
     $zip = zip_open($zipFileName);
 
     if ($zip) {
@@ -43,10 +49,10 @@ function readZipFileEntry($zipFileName, $searchEntryName) {
         zip_close($zip);
     }
 
-    return false;
+    return FALSE;
 }
 
-function getMD5ofFiles($folder) {
+function getMD5ofFiles ($folder) {
     $files = scandir($folder);
     array_shift($files);
     array_shift($files);
@@ -60,44 +66,48 @@ function getMD5ofFiles($folder) {
             #    "sub-files" => getMD5ofFiles($folder . "/" . $file)
             #));
         } else {
-            $dname = substr($file, 0, -4);
-            $side = "BOTH";
-            $optional = false;
-            if (endsWith ($dname, "-client")) {
+            $dname    = substr($file, 0, -4);
+            $side     = "BOTH";
+            $optional = FALSE;
+            if (endsWith($dname, "-client")) {
                 $side = "CLIENT";
             }
-            if (endsWith ($dname, "-server")) {
+            if (endsWith($dname, "-server")) {
                 $side = "SERVER";
             }
-            if (endsWith ($dname, "-optional")) {
-                $side = "CLIENT";
-                $optional = true;
+            if (endsWith($dname, "-optional")) {
+                $side     = "CLIENT";
+                $optional = TRUE;
             }
-            $id=$dname;
+            $id = $dname;
 
             $meta = array();
 
             $mcmod = readZipFileEntry("$folder/$file", "mcmod.info");
-            if(!empty($mcmod)) {
-                $fileInfo = json_decode($mcmod, true);
+            if (!empty($mcmod)) {
+                $fileInfo = json_decode($mcmod, TRUE);
 
-		if(isset($fileInfo["modList"])) { $fileInfo = $fileInfo["modList"][0]; } else { $fileInfo = $fileInfo[0]; }
+                if (isset($fileInfo["modList"])) {
+                    $fileInfo = $fileInfo["modList"][0];
+                } else {
+                    $fileInfo = $fileInfo[0];
+                }
 
-                $id = $fileInfo["modid"];
+                $id    = $fileInfo["modid"];
                 $dname = $fileInfo["name"];
 
                 $meta = $fileInfo;
             }
 
             array_push($fileArray, array(
-                "name" => $file,
-                "meta" => $meta,
-                "dname" => $dname,
-                "id" => $id,
-                "side" => $side,
+                "name"     => $file,
+                "meta"     => $meta,
+                "dname"    => $dname,
+                "id"       => $id,
+                "side"     => $side,
                 "optional" => $optional,
-                "md5" => md5_file("$folder/$file"),
-                "file" => rawurlencode($file)
+                "md5"      => md5_file("$folder/$file"),
+                "file"     => rawurlencode($file)
             ));
         }
     }
@@ -105,7 +115,7 @@ function getMD5ofFiles($folder) {
     return $fileArray;
 }
 
-function readPacks() {
+function readPacks () {
     $files = scandir(".");
     array_shift($files);
     array_shift($files);
@@ -115,11 +125,11 @@ function readPacks() {
     $packs = array();
 
     foreach ($files as $file) {
-        if (is_dir ($file)) {
+        if (is_dir($file)) {
             $meta = array();
-            if(file_exists($file."/modpack.json")) {
-                if((!empty($pack) && $pack == $file) || empty($pack)) {
-                    $meta = json_decode(file_get_contents($file."/modpack.json"), true);
+            if (file_exists($file . "/modpack.json")) {
+                if ((!empty($pack) && $pack == $file) || empty($pack)) {
+                    $meta = json_decode(file_get_contents($file . "/modpack.json"), TRUE);
                     array_push($packs, array(
                         "meta" => $meta,
                         "name" => $file,
@@ -135,8 +145,9 @@ function readPacks() {
 
 $modpacks = readPacks();
 
-if($import) {
-	include "xml-import-template.php";
+if ($import) {
+    include "xml-import-template.php";
 } else {
-	include "xml-template.php";
+    include "xml-template.php";
 }
+*/
