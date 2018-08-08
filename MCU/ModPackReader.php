@@ -144,14 +144,14 @@ class ModPackReader {
                     $packInfo = $this->baseFolder . $file . "/modpack.json";
 
                     if (file_exists($packInfo)) {
-                        $meta = json_decode(file_get_contents($packInfo), TRUE);
+                        $metaInfo = json_decode(file_get_contents($packInfo), TRUE);
 
                         $pack                = new Server();
-                        $pack->serverAddress = @$meta["serverAddress"];
-                        $pack->autoConnect   = @$meta["autoConnect"];
-                        $pack->abstract      = @$meta["abstract"];
-                        $pack->revision      = @$meta["version"];
-                        $pack->version       = @$meta["mcVersion"];
+                        $pack->serverAddress = @$metaInfo["serverAddress"];
+                        $pack->autoConnect   = @$metaInfo["autoConnect"];
+                        $pack->abstract      = @$metaInfo["abstract"];
+                        $pack->revision      = @$metaInfo["version"];
+                        $pack->version       = @$metaInfo["mcVersion"];
                         $pack->name          = $file;
                         $pack->id            = $file;
                         $pack->newsUrl       = "https://mc.r3ktm8.de/?pack={$file}";
@@ -160,7 +160,7 @@ class ModPackReader {
 
                         if (!isset($_GET["import"])) {
                             $forge         = new Import();
-                            $forge->url    = "http://files.mcupdater.com/example/forge.php?mc={$meta["mcVersion"]}&forge={$meta["forgeVersion"]}";
+                            $forge->url    = "http://files.mcupdater.com/example/forge.php?mc={$metaInfo["mcVersion"]}&forge={$metaInfo["forgeVersion"]}";
                             $forge->packId = "forge";
 
                             $pack->addItem($forge);
@@ -209,7 +209,7 @@ class ModPackReader {
                         if (!isset($_GET["import"])) {
                             $forgeMod       = new Module();
                             $forgeMod->name = "Minecraft Forge";
-                            $forgeMod->id   = "forge-{$mod["forgeVersion"]}";
+                            $forgeMod->id   = "forge-{$metaInfo["forgeVersion"]}";
 
                             $forgeMod->addItem(new DefaultItem("Size", "100000"));
                             $forgeMod->addItem(new DefaultItem("Required", "true"));

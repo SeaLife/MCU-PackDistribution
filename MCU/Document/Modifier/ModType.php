@@ -10,7 +10,7 @@ class ModType implements XMLNode {
     public $type;
 
     public function getName () {
-        return "ModPath";
+        return "ModType";
     }
 
     public function getAttributes () {
