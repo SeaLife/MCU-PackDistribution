@@ -41,15 +41,17 @@ class XMLGenerator {
 
         $intendString = $this->getIntend($intend);
 
-        $item = "{$intendString}<{$root->getName()}$attributesString>\n";
+        $item = "{$intendString}<{$root->getName()}$attributesString>";
 
         if (is_array($root->getContent())) {
+            $item .= "\n";
             $item .= $this->generateFromList($root->getContent(), $intend + 1);
+            $item .= "{$intendString}</{$root->getName()}>";
         } else {
-            $item .= $this->getIntend($intend + 1) . $root->getContent() . "\n";
+            $item .= $root->getContent();
+            $item .= "</{$root->getName()}>";
         }
 
-        $item .= "{$intendString}</{$root->getName()}>";
 
         return $item;
     }
