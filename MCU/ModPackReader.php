@@ -18,7 +18,7 @@ class ModPackReader {
 
     private $xml;
 
-    public function __construct ($baseFolder) {
+    public function __construct($baseFolder) {
         $this->baseFolder = $baseFolder;
 
         $this->xml = new ServerPack();
@@ -26,7 +26,7 @@ class ModPackReader {
         $this->readPacks();
     }
 
-    public function output () {
+    public function output() {
         $config = new XMLConfiguration();
         $config->setTheme("ServerPackv3.xsl");
 
@@ -36,14 +36,14 @@ class ModPackReader {
         return $generator->render($this->xml);
     }
 
-    function endsWith ($haystack, $needle) {
+    function endsWith($haystack, $needle) {
         $length = strlen($needle);
 
         return $length === 0 ||
             (substr($haystack, -$length) === $needle);
     }
 
-    function readZipFileEntry ($zipFileName, $searchEntryName) {
+    function readZipFileEntry($zipFileName, $searchEntryName) {
         $zip = zip_open($zipFileName);
 
         if ($zip) {
@@ -65,7 +65,7 @@ class ModPackReader {
         return FALSE;
     }
 
-    function getMD5ofFiles ($folder) {
+    function getMD5ofFiles($folder) {
         $files = scandir($folder);
         array_shift($files);
         array_shift($files);
@@ -73,12 +73,7 @@ class ModPackReader {
         $fileArray = array();
 
         foreach ($files as $file) {
-            if (is_dir($folder . "/" . $file)) {
-                #array_push($fileArray, array(
-                #    "name" => $file,
-                #    "sub-files" => getMD5ofFiles($folder . "/" . $file)
-                #));
-            } else {
+            if (!is_dir($folder . "/" . $file)) {
                 $dname    = substr($file, 0, -4);
                 $side     = "BOTH";
                 $optional = FALSE;
@@ -113,14 +108,14 @@ class ModPackReader {
                 }
 
                 array_push($fileArray, array(
-                    "name"     => $file,
-                    "meta"     => $meta,
-                    "dname"    => $dname,
-                    "id"       => $id,
-                    "side"     => $side,
+                    "name" => $file,
+                    "meta" => $meta,
+                    "dname" => $dname,
+                    "id" => $id,
+                    "side" => $side,
                     "optional" => $optional,
-                    "md5"      => md5_file("$folder/$file"),
-                    "file"     => rawurlencode($file)
+                    "md5" => md5_file("$folder/$file"),
+                    "file" => rawurlencode($file)
                 ));
             }
         }
@@ -128,7 +123,7 @@ class ModPackReader {
         return $fileArray;
     }
 
-    function readPacks () {
+    function readPacks() {
         $files = scandir($this->baseFolder);
         array_shift($files);
         array_shift($files);
@@ -164,6 +159,14 @@ class ModPackReader {
                             $forge->packId = "forge";
 
                             $pack->addItem($forge);
+                        }
+
+                        foreach ($metaInfo["imports"] as $import) {
+                            $importModule         = new Import();
+                            $importModule->url    = "https://mc.r3ktm8.de/?pack={$import}&amp;import=true";
+                            $importModule->packId = $import;
+
+                            $pack->addItem($importModule);
                         }
 
                         $this->xml->addItem($pack);

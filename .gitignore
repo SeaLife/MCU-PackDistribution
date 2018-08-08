@@ -1,11 +1,13 @@
-# gitignore
-
+#### gitignore
 *.zip
 *.xml
 *.jar
 *bak.php
 
-# local modpacks
+#### Ignore local directories
 Leon/
 SeaLife/
 TrainModPack/
+
+#### PHP Storm
+*.iml
