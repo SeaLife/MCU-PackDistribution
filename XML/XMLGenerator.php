@@ -48,7 +48,7 @@ class XMLGenerator {
             $item .= $this->generateFromList($root->getContent(), $intend + 1);
             $item .= "{$intendString}</{$root->getName()}>";
         } else {
-            $item .= $root->getContent();
+            $item .= htmlspecialchars($root->getContent());
             $item .= "</{$root->getName()}>";
         }
 

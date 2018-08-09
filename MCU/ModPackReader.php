@@ -182,6 +182,9 @@ class ModPackReader {
                             $module->name = $mod["meta"]["name"];
                             $module->side = $mod["side"];
 
+                            if(empty($module->id)) $module->id = $mod["file"];
+                            if(empty($module->name)) $module->name = $mod["file"];
+
                             $url           = new URL();
                             $url->priority = 0;
                             $url->url      = "{$_ENV["BASE_URL"]}/{$this->baseFolder}{$file}/mods/{$mod["file"]}";
