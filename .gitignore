@@ -5,9 +5,7 @@
 *bak.php
 
 #### Ignore local directories
-Leon/
-SeaLife/
-TrainModPack/
+modpacks/
 
 #### PHP Storm
 *.iml

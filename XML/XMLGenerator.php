@@ -33,7 +33,7 @@ class XMLGenerator {
                 $v = $v ? "true" : "false";
             }
 
-            if (empty($v)) continue;
+            if (!is_numeric($v) && empty($v)) continue;
 
             $v                = htmlspecialchars($v);
             $attributesString .= " $k=\"$v\"";

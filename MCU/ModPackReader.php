@@ -1,4 +1,5 @@
 <?php
+/** @noinspection SpellCheckingInspection */
 
 namespace MCU;
 
@@ -18,7 +19,7 @@ class ModPackReader {
 
     private $xml;
 
-    public function __construct($baseFolder) {
+    public function __construct ($baseFolder) {
         $this->baseFolder = $baseFolder;
 
         $this->xml = new ServerPack();
@@ -26,7 +27,7 @@ class ModPackReader {
         $this->readPacks();
     }
 
-    public function output() {
+    public function output () {
         $config = new XMLConfiguration();
         $config->setTheme("ServerPackv3.xsl");
 
@@ -36,14 +37,14 @@ class ModPackReader {
         return $generator->render($this->xml);
     }
 
-    function endsWith($haystack, $needle) {
+    function endsWith ($haystack, $needle) {
         $length = strlen($needle);
 
         return $length === 0 ||
             (substr($haystack, -$length) === $needle);
     }
 
-    function readZipFileEntry($zipFileName, $searchEntryName) {
+    function readZipFileEntry ($zipFileName, $searchEntryName) {
         $zip = zip_open($zipFileName);
 
         if ($zip) {
@@ -65,12 +66,14 @@ class ModPackReader {
         return FALSE;
     }
 
-    function getMD5ofFiles($folder) {
-        $files = scandir($folder);
-        array_shift($files);
-        array_shift($files);
+    function getMD5ofFiles ($folder) {
+        $files = @scandir($folder);
+        @array_shift($files);
+        @array_shift($files);
 
         $fileArray = array();
+
+        if (empty($files)) return array();
 
         foreach ($files as $file) {
             if (!is_dir($folder . "/" . $file)) {
@@ -91,31 +94,33 @@ class ModPackReader {
 
                 $meta = array();
 
-                $mcmod = $this->readZipFileEntry("$folder/$file", "mcmod.info");
-                if (!empty($mcmod)) {
-                    $fileInfo = json_decode($mcmod, TRUE);
+                if ($this->endsWith($file, ".jar")) {
+                    $mcmod = $this->readZipFileEntry("$folder/$file", "mcmod.info");
+                    if (!empty($mcmod)) {
+                        $fileInfo = json_decode($mcmod, TRUE);
 
-                    if (isset($fileInfo["modList"])) {
-                        $fileInfo = $fileInfo["modList"][0];
-                    } else {
-                        $fileInfo = $fileInfo[0];
+                        if (isset($fileInfo["modList"])) {
+                            $fileInfo = $fileInfo["modList"][0];
+                        } else {
+                            $fileInfo = $fileInfo[0];
+                        }
+
+                        $id    = $fileInfo["modid"];
+                        $dname = $fileInfo["name"];
+
+                        $meta = $fileInfo;
                     }
-
-                    $id    = $fileInfo["modid"];
-                    $dname = $fileInfo["name"];
-
-                    $meta = $fileInfo;
                 }
 
                 array_push($fileArray, array(
-                    "name" => $file,
-                    "meta" => $meta,
-                    "dname" => $dname,
-                    "id" => $id,
-                    "side" => $side,
+                    "name"     => $file,
+                    "meta"     => $meta,
+                    "dname"    => $dname,
+                    "id"       => $id,
+                    "side"     => $side,
                     "optional" => $optional,
-                    "md5" => md5_file("$folder/$file"),
-                    "file" => rawurlencode($file)
+                    "md5"      => md5_file("$folder/$file"),
+                    "file"     => rawurlencode($file)
                 ));
             }
         }
@@ -123,14 +128,14 @@ class ModPackReader {
         return $fileArray;
     }
 
-    function readPacks() {
+    function readPacks () {
         $files = scandir($this->baseFolder);
         array_shift($files);
         array_shift($files);
 
 
         foreach ($files as $file) {
-            if (is_dir($file)) {
+            if (is_dir($this->baseFolder . $file)) {
 
                 $requestedPack = @$_GET["pack"];
 
@@ -147,9 +152,9 @@ class ModPackReader {
                         $pack->abstract      = @$metaInfo["abstract"];
                         $pack->revision      = @$metaInfo["version"];
                         $pack->version       = @$metaInfo["mcVersion"];
-                        $pack->name          = $file;
+                        $pack->name          = isset($metaInfo["name"]) ? $metaInfo["name"] : $file;
                         $pack->id            = $file;
-                        $pack->newsUrl       = "https://mc.r3ktm8.de/?pack={$file}";
+                        $pack->newsUrl       = "{$_ENV["BASE_URL"]}/?pack={$file}";
                         $pack->mainClass     = "net.minecraft.launchwrapper.Launch";
 
 
@@ -163,7 +168,7 @@ class ModPackReader {
 
                         foreach ($metaInfo["imports"] as $import) {
                             $importModule         = new Import();
-                            $importModule->url    = "https://mc.r3ktm8.de/?pack={$import}&import=true";
+                            $importModule->url    = "{$_ENV["BASE_URL"]}/?pack={$import}&import=true";
                             $importModule->packId = $import;
 
                             $pack->addItem($importModule);
@@ -179,7 +184,7 @@ class ModPackReader {
 
                             $url           = new URL();
                             $url->priority = 0;
-                            $url->url      = "https://mc.r3ktm8.de/{$this->baseFolder}/{$file}/mods/{$mod["file"]}";
+                            $url->url      = "{$_ENV["BASE_URL"]}/{$this->baseFolder}{$file}/mods/{$mod["file"]}";
 
                             if ($mod["optional"]) {
                                 $module->addItem(new DefaultItem("Required", "false"));

@@ -98,6 +98,7 @@
                         </div>
                     </div>
                 </xsl:for-each>
+                <br/>
             </body>
         </html>
     </xsl:template>
