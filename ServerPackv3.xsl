@@ -15,13 +15,26 @@
                 <xsl:for-each select="x:ServerPack/x:Server">
                     <br/>
                     <div class="container-fluid">
-                        <div class="card border-primary">
+                        <div class="card">
+                            <xsl:attribute name="class">
+                                <xsl:choose>
+                                    <xsl:when test="@abstract = 'true'">card border-danger</xsl:when>
+                                    <xsl:otherwise>card border-success</xsl:otherwise>
+                                </xsl:choose>
+                            </xsl:attribute>
+
                             <div class="card-header">
                                 <b>
                                     <xsl:value-of select="@name"/>
                                 </b>
                                 Modpack (v<xsl:value-of select="@revision"/>) for Minecraft
                                 <xsl:value-of select="@version"/>
+
+                                <xsl:choose>
+                                    <xsl:when test="@abstract = 'true'">
+                                        (<i>This Pack cannot be played directly!</i>)
+                                    </xsl:when>
+                                </xsl:choose>
                             </div>
                             <div class="card-body">
                                 <h4 class="card-text">Mods</h4>
@@ -29,8 +42,8 @@
                                     <table class="table table-striped table-bordered">
                                         <thead>
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Version</th>
+                                                <th width="20%">Name</th>
+                                                <th width="20%">Version</th>
                                                 <th>Description</th>
                                             </tr>
                                         </thead>
@@ -50,16 +63,25 @@
                                                         </xsl:choose>
                                                     </td>
                                                     <td>
-                                                        <xsl:value-of select="x:Meta/x:version"/>
+                                                        <xsl:choose>
+                                                            <xsl:when test="string-length(x:Meta/x:version) &gt; 0">
+                                                                <b>
+                                                                    <xsl:value-of select="x:Meta/x:version"/>
+                                                                </b>
+                                                            </xsl:when>
+                                                            <xsl:otherwise>
+                                                                <i>not available</i>
+                                                            </xsl:otherwise>
+                                                        </xsl:choose>
                                                     </td>
                                                     <td>
                                                         <xsl:value-of select="x:Meta/x:description"/>
                                                         <br/>
                                                         <xsl:if test="string-length(x:Meta/x:authors) &gt; 0">
-                                                            Authors:
-                                                            <em>
+                                                            Made by:
+                                                            <strong>
                                                                 <xsl:value-of select="x:Meta/x:authors"/>
-                                                            </em>
+                                                            </strong>
                                                         </xsl:if>
                                                     </td>
                                                 </tr>

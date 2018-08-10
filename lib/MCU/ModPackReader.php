@@ -182,8 +182,8 @@ class ModPackReader {
                             $module->name = $mod["meta"]["name"];
                             $module->side = $mod["side"];
 
-                            if(empty($module->id)) $module->id = $mod["file"];
-                            if(empty($module->name)) $module->name = $mod["file"];
+                            if (empty($module->id)) $module->id = $mod["file"];
+                            if (empty($module->name)) $module->name = $mod["file"];
 
                             $url           = new URL();
                             $url->priority = 0;
@@ -209,7 +209,7 @@ class ModPackReader {
                                 if (!empty($m["description"])) $meta->addItem(new DefaultItem("description", $m["description"]));
                                 if (!empty($m["url"])) $meta->addItem(new DefaultItem("url", $m["url"]));
                                 if (!empty($m["version"])) $meta->addItem(new DefaultItem("version", $m["version"]));
-                                if (!empty($m["authors"])) $meta->addItem(new DefaultItem("authors", join(",", $m["authors"])));
+                                if (!empty($m["authors"])) $meta->addItem(new DefaultItem("authors", join(", ", $m["authors"])));
 
                                 $module->addItem($meta);
                             }
@@ -225,11 +225,17 @@ class ModPackReader {
                             $forgeMod->addItem(new DefaultItem("Size", "100000"));
                             $forgeMod->addItem(new DefaultItem("Required", "true"));
 
+                            $forgeMeta = new Meta();
+                            $forgeMeta->addItem(new DefaultItem("version", $metaInfo["forgeVersion"]));
+                            $forgeMeta->addItem(new DefaultItem("description", "Forge is a ModLoader for Minecraft to make modding great again."));
+                            $forgeMeta->addItem(new DefaultItem("authors", "Forge Development LLC"));
+
                             $forgeType        = new ModType();
                             $forgeType->order = 1;
                             $forgeType->type  = "Override";
 
                             $forgeMod->addItem($forgeType);
+                            $forgeMod->addItem($forgeMeta);
 
                             $pack->addItem($forgeMod);
                         }
