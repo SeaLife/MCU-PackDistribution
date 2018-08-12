@@ -6,7 +6,7 @@
     <xsl:template match="/">
         <html lang="en-US">
             <head>
-                <link href="https://bootswatch.com/4/litera/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+                <link href="https://bootswatch.com/4/lumen/bootstrap.min.css" rel="stylesheet" type="text/css"/>
                 <!--[if lt IE 9]>
                 <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
                 <![endif]-->
@@ -120,6 +120,17 @@
                         </div>
                     </div>
                 </xsl:for-each>
+                <br/>
+                <div class="container-fluid">
+                    <div class="card">
+                        <div class="card-header">
+                            <b>Administration</b>
+                        </div>
+                        <div class="card-body">
+                            Go to the ModPack <a href="index.php/admin">Administration</a> overlay to modify the modpack.
+                        </div>
+                    </div>
+                </div>
                 <br/>
             </body>
         </html>
