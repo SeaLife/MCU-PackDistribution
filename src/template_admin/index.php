@@ -10,7 +10,8 @@
             <br>
             <div class="card">
                 <div class="card-header">
-                    Admin Interface for ModPack <b><?php echo $_SESSION["APP_PACK"]; ?></b>
+                    Admin Interface for ModPack <b><?php echo $_SESSION["APP_PACK"]; ?></b><br/><br/>
+                    <i>Admin Interface not yet implemented.</i>
                 </div>
             </div>
         </div>

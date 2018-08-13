@@ -3,8 +3,12 @@
 use MCU\Config;
 
 
-Config::set("theme", "ServerPackv3.xsl");
-Config::set("passwords.master", "KmSDUJrhS366FY5a");
+Config::set(
+    "theme",
+    orv($_ENV["APP_THEME"], "sealife.xsl")
+);
 
-
-Config::set("passwords.ExamplePack", "epack");
+Config::set(
+    "passwords.master",
+    orv($_ENV["APP_MASTER_PASSWORD"], "KmSDUJrhS366FY5a")
+);

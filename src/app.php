@@ -15,9 +15,7 @@ if (RequestHelper::getPathVariable(1) == "admin") {
 } else {
     header('Content-Type: text/xml');
 
-    if (!isset($_ENV["BASE_URL"])) {
-        $_ENV["BASE_URL"] = "https://mc.r3ktm8.de";
-    }
+    $_ENV["BASE_URL"] = orv($_ENV["BASE_URL"], "https://localhost:8000");
 
     $reader = new ModPackReader("modpacks/");
     echo $reader->output();

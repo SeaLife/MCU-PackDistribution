@@ -19,7 +19,7 @@ class ModPackReader {
 
     private $xml;
 
-    public function __construct($baseFolder) {
+    public function __construct ($baseFolder) {
         $this->baseFolder = $baseFolder;
 
         $this->xml = new ServerPack();
@@ -27,9 +27,9 @@ class ModPackReader {
         $this->readPacks();
     }
 
-    public function output() {
+    public function output () {
         $config = new XMLConfiguration();
-        $config->setTheme(Config::get("theme"));
+        $config->setTheme("template_xml/" . Config::get("theme"));
 
         $generator = new XMLGenerator();
         $generator->setConfig($config);
@@ -37,14 +37,14 @@ class ModPackReader {
         return $generator->render($this->xml);
     }
 
-    function endsWith($haystack, $needle) {
+    function endsWith ($haystack, $needle) {
         $length = strlen($needle);
 
         return $length === 0 ||
             (substr($haystack, -$length) === $needle);
     }
 
-    function readZipFileEntry($zipFileName, $searchEntryName) {
+    function readZipFileEntry ($zipFileName, $searchEntryName) {
         $zip = zip_open($zipFileName);
 
         if ($zip) {
@@ -66,7 +66,7 @@ class ModPackReader {
         return FALSE;
     }
 
-    function getMD5ofFiles($folder) {
+    function getMD5ofFiles ($folder) {
         $files = @scandir($folder);
         @array_shift($files);
         @array_shift($files);
@@ -97,7 +97,7 @@ class ModPackReader {
                 $meta = array();
 
                 if ($this->endsWith($file, ".jar")) {
-                    $mcmod = null;
+                    $mcmod = NULL;
 
                     if (!file_exists("$folder/$file.mcmod")) {
                         $mcmod = $this->readZipFileEntry("$folder/$file", "mcmod.info");
@@ -123,14 +123,14 @@ class ModPackReader {
                 }
 
                 array_push($fileArray, array(
-                    "name" => $file,
-                    "meta" => $meta,
-                    "dname" => $dname,
-                    "id" => $id,
-                    "side" => $side,
+                    "name"     => $file,
+                    "meta"     => $meta,
+                    "dname"    => $dname,
+                    "id"       => $id,
+                    "side"     => $side,
                     "optional" => $optional,
-                    "md5" => md5_file("$folder/$file"),
-                    "file" => rawurlencode($file)
+                    "md5"      => md5_file("$folder/$file"),
+                    "file"     => rawurlencode($file)
                 ));
             }
         }
@@ -138,7 +138,7 @@ class ModPackReader {
         return $fileArray;
     }
 
-    function readPacks() {
+    function readPacks () {
         $files = scandir($this->baseFolder);
         array_shift($files);
         array_shift($files);

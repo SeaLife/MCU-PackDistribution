@@ -11,5 +11,12 @@ spl_autoload_register(function ($name) {
     }
 });
 
+function orv ($val, $or) {
+    if (!isset($val) || empty($val)) {
+        return $or;
+    }
+    return $val;
+}
+
 include "config.php";
 include "app.php";

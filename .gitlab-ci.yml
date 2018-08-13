@@ -1,0 +1,54 @@
+variables:
+  DOCKER_IMAGE_NAME: mcu
+  DOCKER_NAMESPACE: sealife
+
+stages:
+- build
+- deploy
+
+
+build-develop:
+  stage: build
+  image: docker:latest
+  except:
+  - master
+  services:
+  - docker:dind
+  script:
+  - "docker build -t $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:$CI_COMMIT_REF_NAME -t $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:unstable ."
+
+build-master:
+  stage: build
+  image: docker:latest
+  only:
+  - master
+  services:
+  - docker:dind
+  script:
+  - "docker build -t $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:latest -t $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:stable ."
+
+docker-publish-develop:
+  stage: deploy
+  image: docker:latest
+  allow_failure: true
+  except:
+  - master
+  services:
+  - docker:dind
+  script:
+  - "docker login -u=$DOCKER_HUB_USER -p=$DOCKER_HUB_PASSWORD"
+  - "docker push $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:$CI_COMMIT_REF_NAME"
+  - "docker push $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:unstable"
+
+docker-publish-master:
+  stage: deploy
+  image: docker:latest
+  allow_failure: true
+  only:
+  - master
+  services:
+  - docker:dind
+  script:
+  - "docker login -u=$DOCKER_HUB_USER -p=$DOCKER_HUB_PASSWORD"
+  - "docker push $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:latest"
+  - "docker push $DOCKER_NAMESPACE/$DOCKER_IMAGE_NAME:stable"

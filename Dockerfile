@@ -3,7 +3,7 @@ MAINTAINER SeaLife
 
 EXPOSE 8000
 
-COPY src /app
+COPY src/ /app
 
 WORKDIR /app
 
