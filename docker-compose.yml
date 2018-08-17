@@ -7,4 +7,4 @@ services:
     environment:
       - "BASE_URL=https://localhost:8000"
     volumes:
-      #- ./modpacks:/app/modpacks
+      - ./modpacks:/app/modpacks

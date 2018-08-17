@@ -9,6 +9,16 @@ Config::set(
 );
 
 Config::set(
-    "passwords.master",
+    "app.password.admin",
     orv($_ENV["APP_MASTER_PASSWORD"], "KmSDUJrhS366FY5a")
 );
+
+
+$file = (isset($_ENV["COMPOSER_LOCATION"]) ? $_ENV["COMPOSER_LOCATION"] : "../") . "vendor/autoload.php";
+
+if (!file_exists($file)) {
+    die("Composer not installed/runned, run `install-twig.php`");
+} else {
+    /** @noinspection PhpIncludeInspection */
+    include $file;
+}

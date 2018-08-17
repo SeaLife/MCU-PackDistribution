@@ -10,3 +10,8 @@ src/modpacks/*
 
 #### PHP Storm
 *.iml
+
+
+### TWIG
+composer*
+vendor/

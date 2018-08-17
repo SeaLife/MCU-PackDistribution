@@ -1,84 +1,112 @@
 <?php
-
+/** @noinspection PhpUnhandledExceptionInspection */
 
 use HTTP\RequestHelper;
+use HTTP\TemplateLoader;
+use HTTP\View;
 use MCU\Config;
 
-session_start();
 
-$_TEMPLATE = array();
+class AdminInterface {
+    public static function init () {
+        session_start();
 
-function signedIn() {
-    return isset($_SESSION["APP_LOGIN"]) && $_SESSION["APP_LOGIN"] ? true : false;
-}
+        $interface = new AdminInterface();
 
-function checkLogin($pw, $modpack) {
-    global $_TEMPLATE;
+        $httpMethod = $_SERVER['REQUEST_METHOD'];
 
-    if ($pw == Config::get("passwords.$modpack", null)) {
-        $_SESSION["APP_LOGIN"]     = true;
-        $_SESSION["APP_PACK"]      = $modpack;
-        $_SESSION["LOGIN_ATTEMPT"] = 0;
+        $interface->doAction(RequestHelper::getPathVariable(2, NULL), $httpMethod);
 
-        $_TEMPLATE["LOGIN_SUCCESS"] = true;
+        return $interface;
     }
-}
 
-function isPackAllowed() {
-    $myPack = RequestHelper::getPathVariable(3, null);
-    $perm   = $_SESSION["APP_PACK"];
+    public function doAction ($action, $method = "GET") {
+        if (empty($action)) $action = "login"; // set default action
 
-    if ($myPack != null) {
-        if ($perm == $myPack || $perm == "master") {
-            return true;
+
+        try {
+            $methodName = strtolower($method) . ucfirst($action);
+
+            $values = array();
+
+            if (method_exists($this, $methodName)) {
+                $res = $this->$methodName();
+
+                if (is_array($res)) {
+                    $values = $res;
+                }
+            }
+
+            TemplateLoader::render(new View("$action.twig", $values));
+        } catch (Exception $e) {
+            echo "<pre>";
+            echo get_class($e) . "\n\n{$e->getMessage()}\n\n";
+            echo $e->getTraceAsString();
+            echo "</pre>";
         }
     }
-    return false;
-}
 
-$action = RequestHelper::getPathVariable(2, null);
-
-switch ($action) {
-    default:
-    case "login":
-        break;
-    case "choose-pack":
-        break;
-    case "logout":
-        break;
-}
-
-if ($action == "login" || $action == null) {
-
-    if (signedIn()) {
-        header("Location: /index.php/admin/overview");
-    }
-
-    // login
-    if (isset($_POST["password"])) {
-        $pw = $_POST["password"];
-
-        checkLogin($pw, "master");
-
-        // increase login attempts
-        if (!$_SESSION["APP_LOGIN"]) {
-            $_SESSION["LOGIN_ATTEMPT"]++;
+    /**
+     * @httpMethod GET
+     */
+    public function getLogin () {
+        if ($_SESSION["STATE_LOGIN"]) {
+            header("Location: /index.php/admin/overview");
         }
 
-        // ban on too much attempts
-        if ($_SESSION["LOGIN_ATTEMPT"] > Config::get("max-login-attempts", 3)) {
-            RequestHelper::banCurrentIp();
+        return array(
+            "attempts" => $_SESSION["__LOGIN_ATTEMPT"]
+        );
+    }
+
+    /**
+     * @httpMethod GET
+     */
+    public function getLogout () {
+        if ($_SESSION["STATE_LOGIN"]) {
             session_destroy();
+        }
+        header("Location: /index.php/admin/login");
+    }
+
+    /**
+     * @httpMethod POST
+     */
+    public function postLogin () {
+        $password = $_POST["password"];
+        $success  = FALSE;
+
+        if ($password == Config::get("app.password.admin")) {
+            $success                     = TRUE;
+            $_SESSION["__LOGIN_ATTEMPT"] = 0;
+        }
+
+        $_SESSION["STATE_LOGIN"] = $success;
+
+        if (!$success) {
+            if (!isset($_SESSION["__LOGIN_ATTEMPT"])) $_SESSION["__LOGIN_ATTEMPT"] = 0;
+
+            $_SESSION["__LOGIN_ATTEMPT"]++;
+        }
+
+        if ($_SESSION["__LOGIN_ATTEMPT"] == 4) {
+            session_destroy();
+            RequestHelper::banCurrentIp();
             header("Location: /index.php");
         }
+
+        return array(
+            "loginSuccess" => $success,
+            "attempts"     => $_SESSION["__LOGIN_ATTEMPT"]
+        );
     }
 
-    include "template_admin/login.php";
-} elseif ($action == "overview" && signedIn()) {
-    include "template_admin/index.php";
-} elseif ($action == "logout") {
-    echo "dwd";
-    $_SESSION["APP_LOGIN"]     = false;
-    $_SESSION["LOGIN_ATTEMPT"] = 0;
-    header("Location: login");
+    /**
+     * @httpMethod POST
+     */
+    public function post () {
+        $this->postLogin();
+    }
 }
+
+AdminInterface::init();
