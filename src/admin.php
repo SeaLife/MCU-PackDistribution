@@ -46,6 +46,17 @@ class AdminInterface {
         }
     }
 
+    public function getOverview () {
+        $pack   = RequestHelper::getPathVariable(3, NULL);
+        $values = array();
+
+        if ($pack == NULL) {
+            $values["modpacks"] = glob("modpacks/*");
+        }
+
+        return $values;
+    }
+
     /**
      * @httpMethod GET
      */
