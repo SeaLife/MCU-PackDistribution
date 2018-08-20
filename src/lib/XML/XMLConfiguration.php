@@ -3,7 +3,12 @@
 namespace XML;
 
 
+/**
+ * Class XMLConfiguration
+ * @package XML
+ */
 class XMLConfiguration {
+    /** @var string */
     private $theme;
 
     public function getTheme () {

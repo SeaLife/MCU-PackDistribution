@@ -11,3 +11,5 @@ php composer-setup.php
 php -r "unlink('composer-setup.php');"
 
 php composer.phar require "twig/twig:^2.0"
+php composer.phar require "sealife/plumbok:dev-master"
+php composer.phar require "symfony/yaml:v3.3.9"

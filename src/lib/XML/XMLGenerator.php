@@ -2,16 +2,22 @@
 
 namespace XML;
 
+use Plumbok\Annotation\Data;
 
+/**
+ * Class XMLGenerator
+ *
+ * @package XML
+ * @Data
+ * @method void __construct()
+ * @method \XML\XMLConfiguration getConfig()
+ * @method void setConfig(\XML\XMLConfiguration $config)
+ */
 class XMLGenerator {
     /**
      * @var XMLConfiguration
      */
     private $config = NULL;
-
-    public function setConfig ($config) {
-        $this->config = $config;
-    }
 
     public function render (XMLNode $base) {
         $xml = '<?xml version="1.0" encoding="UTF-8" ?>' . "\n";

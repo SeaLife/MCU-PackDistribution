@@ -15,3 +15,7 @@ src/modpacks/*
 ### TWIG
 composer*
 vendor/
+
+### Plumbok
+src/lib/plumbok-cache/*
+!src/lib/plumbok-cache/.gitkeep

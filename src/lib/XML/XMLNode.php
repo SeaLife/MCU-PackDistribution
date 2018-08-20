@@ -2,11 +2,10 @@
 
 namespace XML;
 
-
 interface XMLNode {
     public function getName ();
 
     public function getAttributes ();
 
-    public function getContent();
+    public function getContent ();
 }

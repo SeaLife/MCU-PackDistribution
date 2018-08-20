@@ -2,23 +2,18 @@
 
 use MCU\Config;
 
+class ConfigKeys {
+    const THEME           = "theme";
+    const MASTER_PASSWORD = "app.password.admin";
+}
+
 
 Config::set(
-    "theme",
+    ConfigKeys::THEME,
     orv($_ENV["APP_THEME"], "/template_xml/sealife.xsl")
 );
 
 Config::set(
-    "app.password.admin",
+    ConfigKeys::MASTER_PASSWORD,
     orv($_ENV["APP_MASTER_PASSWORD"], "KmSDUJrhS366FY5a")
 );
-
-
-$file = (isset($_ENV["COMPOSER_LOCATION"]) ? $_ENV["COMPOSER_LOCATION"] : "../") . "vendor/autoload.php";
-
-if (!file_exists($file)) {
-    die("Composer not installed/runned, run `install-twig.php`");
-} else {
-    /** @noinspection PhpIncludeInspection */
-    include $file;
-}
