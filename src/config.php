@@ -5,7 +5,7 @@ use MCU\Config;
 
 Config::set(
     "theme",
-    orv($_ENV["APP_THEME"], "sealife.xsl")
+    orv($_ENV["APP_THEME"], "/template_xml/sealife.xsl")
 );
 
 Config::set(

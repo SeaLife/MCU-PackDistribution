@@ -25,6 +25,7 @@ RUN /app-dependencies/install-twig.sh
 
 ## install app
 COPY src/ /app
+COPY .version /app
 
 ## entrypoint
 WORKDIR /app

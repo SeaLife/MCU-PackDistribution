@@ -29,7 +29,7 @@ class ModPackReader {
 
     public function output () {
         $config = new XMLConfiguration();
-        $config->setTheme("template_xml/" . Config::get("theme"));
+        $config->setTheme(Config::get("theme"));
 
         $generator = new XMLGenerator();
         $generator->setConfig($config);
